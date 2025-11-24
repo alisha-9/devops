@@ -1,0 +1,29 @@
+name: Docker Scan
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: docker build -t myimage .
+
+    - name: Run Trivy Scan
+      uses: aquasecurity/trivy-action@v1
+      with:
+        image-ref: myimage
+        format: table
+        output: scan-result.txt
+
+    - name: Upload Scan Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: scan-report
+        path: scan-result.txt
